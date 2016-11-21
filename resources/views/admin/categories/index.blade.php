@@ -10,50 +10,31 @@
                         <h4>Listagem de Categorias</h4>
                     </span>
                     <span class="pull-right">
-                        <a href="{{ route('categories.create') }}" class="btn btn-primary">Nova Categoria</a>
+                        {!! Button::primary('Nova Categoria')->asLinkTo(route('categories.create')) !!}
                     </span>
                     <div class="clearfix"></div>
                 </div>
                 <div class="panel-body">
-                    <table class="table table-striped table-responsive">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Nome</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        @foreach($categories as $category)
-                            <tr>
-                                <td>{{ $category->id }}</td>
-                                <td>{{ $category->name }}</td>
-                                <td>
-                                    <ul class="list-inline">
-                                        <li>
-                                            <a href="{{ route('categories.edit',['category' => $category->id]) }}">Editar</a>
-                                        </li>
-                                        <li>|</li>
-                                        <li>
-                                            <?php $deleteForm = "delete-form-{$category->id}"; ?>
-                                            <a href="{{ route('categories.destroy',['category' => $category->id]) }}"
-                                               onclick="event.preventDefault();document.getElementById('{{$deleteForm}}').submit();">Excluir</a>
-                                               {!! Form::open([
-                                                'route' => [
-                                                    'categories.destroy',
-                                                    'category' => $category->id
-                                                ],
-                                                'style' => 'display:none',
-                                                'id' => $deleteForm,
-                                                'method' => 'DELETE']) !!}
-                                                {!! Form::close() !!}
-                                        </li>
-                                    </ul>
-                                </td>
-                            </tr>
-                        @endforeach
-                        </tbody>
-                    </table>
+                    {!!
+                     Table::withContents($categories->items())->striped()
+                       ->callback('Ações', function ($field, $category) {
+                        $linkToEdit = route('categories.edit',['category' => $category->id]);
+                        $linkToDestroy = route('categories.destroy',['category' => $category->id]);
+                        $deleteForm = "delete-form-{$category->id}";
+                        $formDelete = Form::open(['route' => ['categories.destroy','category' => $category->id],'style' => 'display:none','id' => $deleteForm,'method' => 'DELETE']).Form::close();
+                        $btnDelete = Button::link('Excluir')->asLinkTo($linkToDestroy)
+                                     ->addAttributes([
+                                        'onclick' => "event.preventDefault();document.getElementById(\"{$deleteForm}\").submit();"
+                                     ]);
+                        return "
+                            <ul class=\"list-inline\">
+                                <li>".Button::link('Editar')->asLinkTo($linkToEdit)."</li>
+                                <li>|</li>
+                                <li>".$btnDelete."</li>
+                            </ul>
+                        ".$formDelete;
+                       })
+                    !!}
                     <div class="text-center">
                         {!! $categories->render() !!}
                     </div>

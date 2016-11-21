@@ -16,16 +16,7 @@
                             ],
                             'class' => 'form',
                             'method' => 'PUT']) !!}
-
-                        <div class="form-group">
-                            {!! Form::label('name','Nome') !!}
-                            {!! Form::text('name', null, ['class' => 'form-control']) !!}
-                        </div>
-
-                        <div class="form-group">
-                            {!! Form::submit('Editar Categoria', ['class' => 'btn btn-primary']) !!}
-                        </div>
-
+                            @include('admin.categories._form')
                         {!! Form::close() !!}
                     </div>
                 </div>

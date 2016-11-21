@@ -10,54 +10,33 @@
                         <h4>Listagem de Livros</h4>
                     </span>
                     <span class="pull-right">
-                        <a href="{{ route('books.create') }}" class="btn btn-primary">Novo Livro</a>
+                        {!! Button::primary('Novo Livro')->asLinkTo(route('books.create')) !!}
                     </span>
                     <div class="clearfix"></div>
                 </div>
                 <div class="panel-body">
-                    <table class="table table-striped table-responsive">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Titulo</th>
-                                <th>Sub-Titulo</th>
-                                <th>Preço</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        @foreach($books as $book)
-                            <tr>
-                                <td>{{ $book->id }}</td>
-                                <td>{{ $book->title }}</td>
-                                <td>{{ $book->subtitle }}</td>
-                                <td>{{ $book->price }}</td>
-                                <td>
-                                    <ul class="list-inline">
-                                        <li>
-                                            <a href="{{ route('books.edit',['book' => $book->id]) }}">Editar</a>
-                                        </li>
-                                        <li>|</li>
-                                        <li>
-                                            <?php $deleteForm = "delete-form-{$book->id}"; ?>
-                                            <a href="{{ route('books.destroy',['book' => $book->id]) }}"
-                                               onclick="event.preventDefault();document.getElementById('{{$deleteForm}}').submit();">Excluir</a>
-                                               {!! Form::open([
-                                                'route' => [
-                                                    'books.destroy',
-                                                    'book' => $book->id
-                                                ],
-                                                'style' => 'display:none',
-                                                'id' => $deleteForm,
-                                                'method' => 'DELETE']) !!}
-                                                {!! Form::close() !!}
-                                        </li>
-                                    </ul>
-                                </td>
-                            </tr>
-                        @endforeach
-                        </tbody>
-                    </table>
+                    {!!
+                     Table::withContents(
+                        $books->items()
+                     )->striped()
+                       ->callback('Ações', function ($field, $book) {
+                        $linkToEdit = route('books.edit',['book' => $book->id]);
+                        $linkToDestroy = route('books.destroy',['book' => $book->id]);
+                        $deleteForm = "delete-form-{$book->id}";
+                        $formDelete = Form::open(['route' => ['books.destroy','book' => $book->id],'style' => 'display:none','id' => $deleteForm,'method' => 'DELETE']).Form::close();
+                        $btnDelete = Button::link('Excluir')->asLinkTo($linkToDestroy)
+                                     ->addAttributes([
+                                        'onclick' => "event.preventDefault();document.getElementById(\"{$deleteForm}\").submit();"
+                                     ]);
+                        return "
+                            <ul class=\"list-inline\">
+                                <li>".Button::link('Editar')->asLinkTo($linkToEdit)."</li>
+                                <li>|</li>
+                                <li>".$btnDelete."</li>
+                            </ul>
+                        ".$formDelete;
+                       })
+                    !!}
                     <div class="text-center">
                         {!! $books->render() !!}
                     </div>

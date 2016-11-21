@@ -10,16 +10,7 @@
                     </div>
                     <div class="panel-body">
                         {!! Form::open(['route' => 'categories.store', 'class' => 'form']) !!}
-
-                        <div class="form-group">
-                            {!! Form::label('name','Nome') !!}
-                            {!! Form::text('name', null, ['class' => 'form-control']) !!}
-                        </div>
-
-                        <div class="form-group">
-                            {!! Form::submit('Criar Categoria', ['class' => 'btn btn-primary']) !!}
-                        </div>
-
+                            @include('admin.categories._form')
                         {!! Form::close() !!}
                     </div>
                 </div>
