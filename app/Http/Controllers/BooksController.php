@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace CodePub\Http\Controllers;
 
-use App\Book;
-use App\Http\Requests\BookRequest;
+use CodePub\Models\Book;
+use CodePub\Http\Requests\BookRequest;
 use Illuminate\Http\Request;
 
 class BooksController extends Controller
@@ -46,7 +46,7 @@ class BooksController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param Book $book
+     * @param \CodePub\Models\Book $book
      * @return \Illuminate\Http\Response
      */
     public function edit(Book $book)

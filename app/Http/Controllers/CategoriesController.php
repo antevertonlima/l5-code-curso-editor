@@ -1,13 +1,23 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace CodePub\Http\Controllers;
 
-use App\Category;
-use App\Http\Requests\CategoryRequest;
+use CodePub\Models\Category;
+use CodePub\Http\Requests\CategoryRequest;
 use Illuminate\Http\Request;
 
 class CategoriesController extends Controller
 {
+    /**
+     * @var CategoryRequest
+     */
+    private $repository;
+
+    public function __construct(CategoryRequest $repository)
+    {
+        $this->repository = $repository;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -15,7 +25,7 @@ class CategoriesController extends Controller
      */
     public function index()
     {
-        $categories = Category::paginate(10);
+        $categories = $this->repository->paginate(10);
         return view('admin.categories.index', compact('categories'));
     }
 
@@ -37,7 +47,7 @@ class CategoriesController extends Controller
      */
     public function store(CategoryRequest $request)
     {
-        $category = Category::create($request->all());
+        $category = $this->repository->create($request->all());
         $url = $request->get('redirect_to' , route('categories.index'));
         $request->session()->flash('message', 'Categoria "'.$category->name.'" criada com sucesso!');
         return redirect()->to($url);
@@ -58,12 +68,12 @@ class CategoriesController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request $request
-     * @param Category $category
+     * @param \CodePub\Models\Category $category
      * @return \Illuminate\Http\Response
      */
     public function update(CategoryRequest $request, Category $category)
     {
-        $category->fill($request->all());
+        $category = $this->repository->fill($request->all());
         $category->save();
         $url = $request->get('redirect_to' , route('categories.index'));
         $request->session()->flash('message', 'Categoria "'.$category->name.'" editada com sucesso!');
@@ -73,7 +83,7 @@ class CategoriesController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param Category $category
+     * @param \CodePub\Models\Category $category
      * @return \Illuminate\Http\Response
      */
     public function destroy(Category $category)
